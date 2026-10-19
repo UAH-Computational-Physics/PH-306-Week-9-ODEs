@@ -1,13 +1,13 @@
 import pytest
 from numpydoc.validate import validate
 
-import assignment
+import ode
 
 
 DOCSTRING_TARGETS = [
     # Add Functions for Docstring Feedback here
     # For example:
-    # assignment.distance_traveled
+    # ode.distance_traveled
 ]
 
 DOCSTRING_CHECKS = {
