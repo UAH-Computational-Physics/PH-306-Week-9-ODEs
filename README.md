@@ -2,7 +2,7 @@
 
 ## Instructions
 
-Complete the TODOs in `assignment.py`. This is the **primary student work file**
+Complete the TODOs in `ode.py`. This is the **primary student work file**
 for this assignment (there is no notebook version this week).
 
 Every function must be solved numerically with
