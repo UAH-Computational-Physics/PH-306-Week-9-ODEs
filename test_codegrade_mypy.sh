@@ -3,7 +3,7 @@ set -o pipefail
 
 # --- Configuration ---
 CONFIG_FILE="$UPLOADED_FILES/mypy.ini"
-TARGET_PATH="assignment.py"     # Target file or directory
+TARGET_PATH="ode.py"            # Target file or directory
 MAX_POINTS=10                   # Total points possible
 PENALTY_PER_ERROR=2             # Deduction per mypy error
 MIN_SCORE=0                     # Floor score

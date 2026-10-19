@@ -27,6 +27,9 @@ Environment setup expectations:
 - Google Colab: the repository includes requirements.txt for package installation.
 - CodeGrade: environment is preconfigured by the instructor.
 
+Agent command execution:
+- When running Python, tests, or other tooling locally, AI agents must use `mamba` (not `micromamba`) with the `ph306` environment, for example `mamba run -n ph306 python assignment.py`.
+
 ### Regarding Student Use of AI
 
 Generative AI use is permitted. However, students are responsible for explaining their code and results through one of the following:
