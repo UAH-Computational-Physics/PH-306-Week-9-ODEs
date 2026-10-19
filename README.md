@@ -104,4 +104,6 @@ figure plotting all three of the following over `t_span`:
 
 Include a legend identifying each of the three curves, and return the
 `Figure` object (this plot will later be compared against a reference
-image using `skimage`).
+image using `skimage`). The figure will be checked for $\theta_0 = \pi/3$,
+$\omega_0 = 0$, $g = 9.8$, and $L = 1$ over the interval from $t = 0$ to
+$t = 5$. The reference image can be found in this unit's module on Canvas.
