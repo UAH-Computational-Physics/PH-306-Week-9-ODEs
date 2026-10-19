@@ -1,0 +1,72 @@
+# Semgrep rules for the CodeGrade "Structure" category.
+#
+# Usage: split these rules across CodeGrade structure blocks by id.
+#   - Positive match block (credit awarded when found):
+#       required-solve-ivp-call
+#   - Negative match block (credit deducted when found):
+#       forbidden-hardcoded-success
+#       forbidden-fabricated-result-object
+#       forbidden-hardcoded-result-attributes
+#
+# Rationale: the public/private pytest suites only check attributes of the
+# returned object (e.g. `sol.success`, `sol.y`, `sol.t`). A student could
+# satisfy every functionality test by hand-computing the analytic answer
+# and wrapping it in a fake object (e.g. `types.SimpleNamespace(success=True,
+# y=..., t=t_eval)`) instead of calling `solve_ivp`. The positive rule below
+# requires every target function to actually call `solve_ivp`; the negative
+# rules flag the most common ways to fabricate a passing result without it.
+
+rules:
+  - id: required-solve-ivp-call
+    languages: [python]
+    severity: ERROR
+    message: >
+      REQUIRED: `$FUNC` must call solve_ivp to numerically integrate the
+      ODE rather than hardcoding or fabricating the result.
+    patterns:
+      - pattern: |
+          def $FUNC(...):
+              ...
+              solve_ivp(...)
+              ...
+      - metavariable-regex:
+          metavariable: $FUNC
+          regex: ^(constant_acceleration_velocity|time_dependent_force_velocity|linear_drag_velocity|rc_circuit_charging_voltage|quadratic_drag_velocity|logistic_population_growth|damped_harmonic_oscillator|pendulum_comparison)$
+
+  - id: forbidden-hardcoded-success
+    languages: [python]
+    severity: ERROR
+    message: >
+      FORBIDDEN: manually setting a `.success` attribute fakes a solve_ivp
+      result instead of letting solve_ivp report success.
+    patterns:
+      - pattern-either:
+          - pattern: $OBJ.success = True
+          - pattern: $OBJ.success = $VAL
+
+  - id: forbidden-fabricated-result-object
+    languages: [python]
+    severity: ERROR
+    message: >
+      FORBIDDEN: constructing a stand-in result object (OdeResult,
+      OptimizeResult, SimpleNamespace, etc.) instead of returning the
+      object produced by solve_ivp.
+    patterns:
+      - pattern-either:
+          - pattern: OdeResult(...)
+          - pattern: scipy.integrate.OdeResult(...)
+          - pattern: OptimizeResult(...)
+          - pattern: scipy.optimize.OptimizeResult(...)
+          - pattern: SimpleNamespace(...)
+          - pattern: types.SimpleNamespace(...)
+
+  - id: forbidden-hardcoded-result-attributes
+    languages: [python]
+    severity: ERROR
+    message: >
+      FORBIDDEN: directly assigning `.y` or `.t` on an object bypasses
+      solve_ivp and hardcodes the expected answer.
+    patterns:
+      - pattern-either:
+          - pattern: $OBJ.y = ...
+          - pattern: $OBJ.t = ...
