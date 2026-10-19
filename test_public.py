@@ -13,6 +13,9 @@ from skimage.io import imread  # noqa: E402
 from skimage.metrics import structural_similarity  # noqa: E402
 from skimage.transform import resize  # noqa: E402
 
+# Reference plots are rendered with LaTeX text rendering enabled.
+plt.rcParams["text.usetex"] = True
+
 
 def test_constant_acceleration_velocity():
     v0, a = 3.0, 2.0
