@@ -126,7 +126,7 @@ def test_pendulum_comparison_image():
     if not os.path.exists(ref_path):
         pytest.skip("reference image PendulumCompare.png not found")
 
-    theta0, omega0, g, L = 0.1, 0.0, 9.8, 1.0
+    theta0, omega0, g, L = np.pi/3, 0.0, 9.8, 1.0
     t_eval = np.linspace(0, 5, 200)
     fig = ode.pendulum_comparison(theta0, omega0, g, L, (0, 5), t_eval)
     fig.canvas.draw()
