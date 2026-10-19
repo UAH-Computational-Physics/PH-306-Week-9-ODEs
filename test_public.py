@@ -1,10 +1,17 @@
+import os
+
 import matplotlib
 import numpy as np
+import pytest
 
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
 import ode  # noqa: E402
+from skimage.color import rgb2gray  # noqa: E402
+from skimage.io import imread  # noqa: E402
+from skimage.metrics import structural_similarity  # noqa: E402
+from skimage.transform import resize  # noqa: E402
 
 
 def test_constant_acceleration_velocity():
@@ -110,3 +117,24 @@ def test_pendulum_comparison():
     assert any(
         np.allclose(data, exact, rtol=1e-2, atol=1e-2) for data in line_data
     ), "one curve must match the exact small-angle analytic solution"
+
+
+def test_pendulum_comparison_image():
+    ref_path = os.path.join(
+        os.environ.get("UPLOADED_FILES", "."), "PendulumCompare.png"
+    )
+    if not os.path.exists(ref_path):
+        pytest.skip("reference image PendulumCompare.png not found")
+
+    theta0, omega0, g, L = 0.1, 0.0, 9.8, 1.0
+    t_eval = np.linspace(0, 5, 200)
+    fig = ode.pendulum_comparison(theta0, omega0, g, L, (0, 5), t_eval)
+    fig.canvas.draw()
+    img = rgb2gray(np.asarray(fig.canvas.buffer_rgba())[..., :3])
+
+    ref = imread(ref_path)[..., :3]
+    ref = rgb2gray(ref[..., :3] if ref.dtype != np.uint8 else ref / 255.0)
+    img = resize(img, ref.shape, anti_aliasing=True)
+
+    score = structural_similarity(img, ref, data_range=1.0)
+    assert score > 0.9, f"figure differs from reference image (SSIM={score:.2f})"

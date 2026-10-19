@@ -11,6 +11,7 @@ dependencies:
   - astropy
   - numpy
   - scipy
+  - scikit-image
   - pandas
   - pytest
   - flake8
