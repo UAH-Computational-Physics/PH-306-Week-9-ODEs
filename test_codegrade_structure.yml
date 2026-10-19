@@ -1,8 +1,16 @@
 # Semgrep rules for the CodeGrade "Structure" category.
 #
 # Usage: split these rules across CodeGrade structure blocks by id.
-#   - Positive match block (credit awarded when found):
-#       required-solve-ivp-call
+#   - Positive match blocks (credit awarded when found), one per function so
+#     that every function is independently required to earn credit:
+#       required-solve-ivp-call-constant-acceleration-velocity
+#       required-solve-ivp-call-time-dependent-force-velocity
+#       required-solve-ivp-call-linear-drag-velocity
+#       required-solve-ivp-call-rc-circuit-charging-voltage
+#       required-solve-ivp-call-quadratic-drag-velocity
+#       required-solve-ivp-call-logistic-population-growth
+#       required-solve-ivp-call-damped-harmonic-oscillator
+#       required-solve-ivp-call-pendulum-comparison
 #   - Negative match block (credit deducted when found):
 #       forbidden-hardcoded-success
 #       forbidden-fabricated-result-object
@@ -12,26 +20,118 @@
 # returned object (e.g. `sol.success`, `sol.y`, `sol.t`). A student could
 # satisfy every functionality test by hand-computing the analytic answer
 # and wrapping it in a fake object (e.g. `types.SimpleNamespace(success=True,
-# y=..., t=t_eval)`) instead of calling `solve_ivp`. The positive rule below
-# requires every target function to actually call `solve_ivp`; the negative
-# rules flag the most common ways to fabricate a passing result without it.
+# y=..., t=t_eval)`) instead of calling `solve_ivp`. The positive rules below
+# each require one specific function to call `solve_ivp`; a single shared
+# rule id with a function-name regex would be satisfied as soon as any one
+# function matched, letting the other seven skip integration entirely. The
+# negative rules flag the most common ways to fabricate a passing result
+# without calling solve_ivp.
 
 rules:
-  - id: required-solve-ivp-call
+  - id: required-solve-ivp-call-constant-acceleration-velocity
     languages: [python]
     severity: ERROR
     message: >
-      REQUIRED: `$FUNC` must call solve_ivp to numerically integrate the
-      ODE rather than hardcoding or fabricating the result.
+      REQUIRED: `constant_acceleration_velocity` must call solve_ivp to
+      numerically integrate the ODE rather than hardcoding the result.
     patterns:
       - pattern: |
-          def $FUNC(...):
+          def constant_acceleration_velocity(...):
               ...
               solve_ivp(...)
               ...
-      - metavariable-regex:
-          metavariable: $FUNC
-          regex: ^(constant_acceleration_velocity|time_dependent_force_velocity|linear_drag_velocity|rc_circuit_charging_voltage|quadratic_drag_velocity|logistic_population_growth|damped_harmonic_oscillator|pendulum_comparison)$
+
+  - id: required-solve-ivp-call-time-dependent-force-velocity
+    languages: [python]
+    severity: ERROR
+    message: >
+      REQUIRED: `time_dependent_force_velocity` must call solve_ivp to
+      numerically integrate the ODE rather than hardcoding the result.
+    patterns:
+      - pattern: |
+          def time_dependent_force_velocity(...):
+              ...
+              solve_ivp(...)
+              ...
+
+  - id: required-solve-ivp-call-linear-drag-velocity
+    languages: [python]
+    severity: ERROR
+    message: >
+      REQUIRED: `linear_drag_velocity` must call solve_ivp to numerically
+      integrate the ODE rather than hardcoding the result.
+    patterns:
+      - pattern: |
+          def linear_drag_velocity(...):
+              ...
+              solve_ivp(...)
+              ...
+
+  - id: required-solve-ivp-call-rc-circuit-charging-voltage
+    languages: [python]
+    severity: ERROR
+    message: >
+      REQUIRED: `rc_circuit_charging_voltage` must call solve_ivp to
+      numerically integrate the ODE rather than hardcoding the result.
+    patterns:
+      - pattern: |
+          def rc_circuit_charging_voltage(...):
+              ...
+              solve_ivp(...)
+              ...
+
+  - id: required-solve-ivp-call-quadratic-drag-velocity
+    languages: [python]
+    severity: ERROR
+    message: >
+      REQUIRED: `quadratic_drag_velocity` must call solve_ivp to
+      numerically integrate the ODE rather than hardcoding the result.
+    patterns:
+      - pattern: |
+          def quadratic_drag_velocity(...):
+              ...
+              solve_ivp(...)
+              ...
+
+  - id: required-solve-ivp-call-logistic-population-growth
+    languages: [python]
+    severity: ERROR
+    message: >
+      REQUIRED: `logistic_population_growth` must call solve_ivp to
+      numerically integrate the ODE rather than hardcoding the result.
+    patterns:
+      - pattern: |
+          def logistic_population_growth(...):
+              ...
+              solve_ivp(...)
+              ...
+
+  - id: required-solve-ivp-call-damped-harmonic-oscillator
+    languages: [python]
+    severity: ERROR
+    message: >
+      REQUIRED: `damped_harmonic_oscillator` must call solve_ivp to
+      numerically integrate the ODE rather than hardcoding the result.
+    patterns:
+      - pattern: |
+          def damped_harmonic_oscillator(...):
+              ...
+              solve_ivp(...)
+              ...
+
+  - id: required-solve-ivp-call-pendulum-comparison
+    languages: [python]
+    severity: ERROR
+    message: >
+      REQUIRED: `pendulum_comparison` must call solve_ivp to numerically
+      integrate both the small-angle and full nonlinear equations rather
+      than hardcoding either result.
+    patterns:
+      - pattern: |
+          def pendulum_comparison(...):
+              ...
+              solve_ivp(...)
+              ...
 
   - id: forbidden-hardcoded-success
     languages: [python]
